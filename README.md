@@ -13,6 +13,8 @@
 ![DSGVO](https://img.shields.io/badge/DSGVO-by_design-5a3fd6)
 ![License](https://img.shields.io/badge/License-MIT-black)
 
+![EntraFlow – Übersicht](docs/screenshots/01-uebersicht.png)
+
 ---
 
 ## Das Problem
@@ -52,6 +54,20 @@ revisionssicher im Audit-Log.
 - 🔌 **Graph-treu** — die gesamte Logik ist gegen die **echte Microsoft-Graph-v1.0-API**
   programmiert. Der mitgelieferte In-Memory-Mock ist verhaltensgleich; der Wechsel auf
   einen produktiven Tenant ist **reine Konfiguration** (`GRAPH_MODE=graph`).
+
+---
+
+## Einblicke
+
+| Lebenszyklus (Plan → Apply) | Lizenz-Governance |
+|---|---|
+| ![JML-Plan](docs/screenshots/04-lifecycle-plan.png) | ![Lizenzen](docs/screenshots/02-lizenzen.png) |
+| **Der 32-Aktionen-Plan** — Joiner/Mover/Leaver, jede Aktion mit Begründung und DSGVO-Hinweis. | **11 €/Monat Einsparpotenzial** — inaktive und geleakte Seats werden beziffert. |
+
+| DSGVO-Compliance | Audit-Log |
+|---|---|
+| ![DSGVO](docs/screenshots/03-dsgvo.png) | ![Audit](docs/screenshots/05-audit.png) |
+| **Score, Feststellungen & Löschkonzept** (Art. 5/17/32) direkt aus dem Tenant-Zustand. | **Revisionssicher** — jede angewandte Änderung nachvollziehbar protokolliert. |
 
 ---
 

@@ -1,0 +1,23 @@
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    environment:
+      GRAPH_MODE: memory
+      REFERENCE_DATE: "2026-07-23"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/health')"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    environment:
+      # Im Browser aufgerufen -> zeigt auf den veröffentlichten Backend-Port.
+      NEXT_PUBLIC_API_BASE: "http://localhost:8000"
+    depends_on:
+      - backend

@@ -57,6 +57,16 @@ revisionssicher im Audit-Log.
 
 ---
 
+## Demo (30 Sekunden)
+
+Ein kompletter Schuljahreswechsel: Plan erstellen → simulieren (Dry-Run) → anwenden.
+Der DSGVO-Score steigt dabei von **42 auf 82**, das Lizenz-Einsparpotenzial sinkt, weil
+„vergessene" Seats zurückgegeben werden.
+
+![EntraFlow Demo](docs/media/entraflow-demo.gif)
+
+---
+
 ## Einblicke
 
 | Lebenszyklus (Plan → Apply) | Lizenz-Governance |

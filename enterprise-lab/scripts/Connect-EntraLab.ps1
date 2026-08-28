@@ -10,6 +10,7 @@ param(
     [string[]]$Scopes = @(
         'User.ReadWrite.All',
         'Group.ReadWrite.All',
+        'LicenseAssignment.ReadWrite.All',
         'Organization.Read.All',
         'AuditLog.Read.All',
         'DeviceManagementManagedDevices.Read.All',

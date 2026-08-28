@@ -13,7 +13,7 @@ if (-not (Get-Module -ListAvailable -Name Microsoft.Graph.Users)) {
 
 Import-Module Microsoft.Graph.Users
 
-function New-RandomInitialPassword {
+function Get-RandomInitialPassword {
     $bytes = New-Object byte[] 24
     [System.Security.Cryptography.RandomNumberGenerator]::Fill($bytes)
     return ([Convert]::ToBase64String($bytes) + 'aA1!')
@@ -70,7 +70,7 @@ foreach ($row in $rows) {
 
     $target = "$($row.DisplayName) <$upn>"
     if ($PSCmdlet.ShouldProcess($target, 'Create Microsoft Entra test user')) {
-        $initialPassword = New-RandomInitialPassword
+        $initialPassword = Get-RandomInitialPassword
         $mailNickname = ($upn.Split('@')[0] -replace '[^a-zA-Z0-9._-]', '')
 
         $body = @{

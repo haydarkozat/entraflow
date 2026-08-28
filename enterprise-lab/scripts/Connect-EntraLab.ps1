@@ -39,12 +39,15 @@ else {
         }
     }
 
-    Connect-MgGraph \
-        -TenantId $TenantId \
-        -ClientId $ClientId \
-        -CertificateThumbprint $CertificateThumbprint \
-        -ContextScope Process \
-        -NoWelcome
+    $connectionParameters = @{
+        TenantId              = $TenantId
+        ClientId              = $ClientId
+        CertificateThumbprint = $CertificateThumbprint
+        ContextScope          = 'Process'
+        NoWelcome             = $true
+    }
+
+    Connect-MgGraph @connectionParameters
 }
 
 $context = Get-MgContext

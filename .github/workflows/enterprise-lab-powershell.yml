@@ -25,13 +25,7 @@ jobs:
       - name: Analyze PowerShell scripts
         shell: pwsh
         run: |
-          $results = @(
-            Invoke-ScriptAnalyzer \
-              -Path ./enterprise-lab/scripts \
-              -Recurse \
-              -Severity Error,Warning \
-              -ExcludeRule PSUseBOMForUnicodeEncodedFile
-          )
+          $results = @(Invoke-ScriptAnalyzer -Path ./enterprise-lab/scripts -Recurse -Severity Error,Warning -ExcludeRule PSUseBOMForUnicodeEncodedFile)
           if ($results.Count -gt 0) {
             $results | Format-Table -AutoSize
             throw "PSScriptAnalyzer found $($results.Count) issue(s)."

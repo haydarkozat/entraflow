@@ -84,7 +84,7 @@ enterprise-lab/
 - Ein eigener Microsoft-365-/Entra-Testtenant mit den für die jeweilige Funktion erforderlichen Lizenzen
 - Microsoft Graph PowerShell SDK
 - Für Intune-Szenarien mindestens ein **Testgerät** oder eine dafür vorgesehene Windows-11-Test-VM
-- Keine produktiven Konten oder Geräte für destructive Tests verwenden
+- Keine produktiven Konten oder Geräte für destruktive Tests verwenden
 
 Module installieren:
 
@@ -101,15 +101,15 @@ Lab-Verbindung herstellen:
 Benutzeranlage zunächst sicher simulieren:
 
 ```powershell
-./scripts/New-LabUsersFromCsv.ps1 \
-  -CsvPath ./sample-data/users.csv \
+./scripts/New-LabUsersFromCsv.ps1 `
+  -CsvPath ./sample-data/users.csv `
   -WhatIf
 ```
 
 Danach bewusst ausführen:
 
 ```powershell
-./scripts/New-LabUsersFromCsv.ps1 \
+./scripts/New-LabUsersFromCsv.ps1 `
   -CsvPath ./sample-data/users.csv
 ```
 

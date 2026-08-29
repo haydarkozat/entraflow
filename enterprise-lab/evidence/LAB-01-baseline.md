@@ -2,8 +2,8 @@
 
 **Environment:** NordWerk GmbH – Enterprise IT Lab  
 **Scenario:** LAB-01  
-**Status:** In progress  
-**Date:** YYYY-MM-DD
+**Status:** Baseline completed; RBAC documentation in progress  
+**Date:** 2026-08-29
 
 ## Problem
 
@@ -11,37 +11,50 @@ Eine neue Microsoft-Enterprise-Testumgebung benötigt vor Benutzer-, Geräte- un
 
 ## Maßnahme
 
-- Microsoft-Entra-/Intune-Testtenant bereitgestellt.
+- Microsoft-Entra-/Intune-Testtenant bereitgestellt und Microsoft Graph erfolgreich per delegierter Authentifizierung verbunden.
+- Schreibende Baseline-Aktion zunächst mit `-WhatIf` geprüft.
 - Fünf Abteilungs-Sicherheitsgruppen angelegt.
 - Separate Pilotgruppen für Conditional Access und Intune-Geräte-Policies angelegt.
 - Baseline per PowerShell/Microsoft Graph reproduzierbar umgesetzt.
-- Schreibende Aktion zunächst mit `-WhatIf` geprüft.
+- Script unmittelbar ein zweites Mal ausgeführt, um Duplikatvermeidung und Idempotenz zu prüfen.
 
 ## Ergebnis
 
-Nach Abschluss hier dokumentieren:
-
-- Tenant erfolgreich erreichbar: `Ja/Nein`
+- Tenant erfolgreich erreichbar: `Ja`
 - Erwartete Gruppen: `7`
-- Tatsächlich vorhandene Gruppen: `<Anzahl>`
-- Zweiter Script-Lauf ohne Duplikate: `Ja/Nein`
+- Tatsächlich erstellte Gruppen: `7`
+- Zweiter Script-Lauf ohne Duplikate: `Ja`
 - Verwendete Script-Datei: `Initialize-TenantBaseline.ps1`
+
+### Erstellte Gruppen
+
+| Gruppe | Erstlauf | Zweitlauf |
+|---|---|---|
+| `GRP-CA-Pilot` | `Created` | `Existing / None` |
+| `GRP-Devices-Pilot` | `Created` | `Existing / None` |
+| `SG-Dept-Finance` | `Created` | `Existing / None` |
+| `SG-Dept-HR` | `Created` | `Existing / None` |
+| `SG-Dept-IT` | `Created` | `Existing / None` |
+| `SG-Dept-Operations` | `Created` | `Existing / None` |
+| `SG-Dept-Sales` | `Created` | `Existing / None` |
+
+### Technischer Nachweis
+
+Der erste produktive Lauf lieferte für alle sieben Zielgruppen den Status `Created`. Der unmittelbar danach ausgeführte zweite Lauf erkannte dieselben Objekte und lieferte für alle Gruppen `Existing` mit `Action = None`. Damit wurde die Idempotenz des Baseline-Skripts in einem realen Microsoft-Entra-Testtenant nachgewiesen.
 
 ## Sicherheitsaspekt
 
-- Keine Secrets oder Kennwörter im Repository.
+- Keine Secrets, Kennwörter, Tenant-IDs oder personenbezogenen Kontodaten im Repository.
+- Schreibende Änderungen vorab mit `-WhatIf` validiert.
 - Conditional Access wird in LAB-01 noch nicht produktiv aktiviert.
-- Änderungen zunächst über Pilot-Scope und `-WhatIf` validiert.
-- Rollenvergabe nach Least-Privilege-Prinzip weiterentwickelt.
+- Getrennte Pilotgruppen für spätere Conditional-Access- und Intune-Rollouts vorhanden.
+- Rollenvergabe und tägliche Administration werden im nächsten LAB-01-Schritt nach Least-Privilege-Prinzip dokumentiert.
 
-## Evidence-Dateien
-
-Nach eigener Durchführung ergänzen:
+## Noch offene Evidence-Artefakte
 
 - `LAB-01-01-tenant-overview.png`
 - `LAB-01-02-baseline-groups.png`
-- `LAB-01-03-whatif-terminal.png`
-- `LAB-01-04-created-terminal.png`
-- `LAB-01-05-idempotency-terminal.png`
+- optional redigierte Terminal-Screenshots für `-WhatIf`, Erstellung und Idempotenz
+- RBAC-/Berechtigungsmatrix
 
-> Vor dem Commit Screenshots auf Tenant-IDs, E-Mail-Adressen, QR-Codes, Secrets, Telefonnummern und andere personenbezogene bzw. sicherheitsrelevante Daten prüfen und nötigenfalls redigieren.
+> Vor dem Commit von Screenshots auf Tenant-IDs, E-Mail-Adressen, QR-Codes, Secrets, Telefonnummern und andere personenbezogene bzw. sicherheitsrelevante Daten prüfen und nötigenfalls redigieren.

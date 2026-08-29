@@ -12,6 +12,18 @@ Ein Szenario ist erst abgeschlossen, wenn der Nachweis zeigt:
 4. **Kontrolle** – Wie wurde das Ergebnis verifiziert?
 5. **Security** – Welche Sicherheits-/Least-Privilege-Überlegung wurde berücksichtigt?
 
+## LAB-01
+
+Für LAB-01 gelten:
+
+- [Technische Bewertung](LAB-01-baseline.md)
+- [Evidence-Manifest](LAB-01-evidence-manifest.md)
+- [RBAC-Matrix](LAB-01-RBAC-MATRIX.md)
+- [Break-Glass-Konzept](LAB-01-BREAK-GLASS.md)
+- [Sicheres Capture-Runbook](../docs/LAB-01-EVIDENCE-CAPTURE.md)
+
+Die fünf PNG-Dateien müssen aus der echten Testtenant-Ausführung stammen. Platzhalter und nachgestellte Resultate gelten nicht als Evidence.
+
 ## Empfohlene Dateinamen
 
 ```text
@@ -53,7 +65,8 @@ LAB-02-summary.md
 - BitLocker Recovery Keys
 - Access-/Refresh-Tokens
 - echte Mitarbeiter-/Schülerdaten
-- vollständige Tenant-IDs, falls sie nicht bewusst veröffentlicht werden sollen
+- Tenant-, Client-, Benutzer- oder Objekt-IDs
+- E-Mail-Adressen und User Principal Names
 - Screenshots mit sensitiven personenbezogenen Daten
 
 ## Recruiter-Ansicht

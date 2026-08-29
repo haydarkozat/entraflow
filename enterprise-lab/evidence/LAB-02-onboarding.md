@@ -2,56 +2,70 @@
 
 **Environment:** NordWerk GmbH – Enterprise IT Lab  
 **Scenario:** LAB-02  
-**Status:** Onboarding executed; portal verification pending  
+**Status:** Completed  
 **Date:** 2026-08-29
 
 ## Ziel
 
-Mehrere fiktive Mitarbeitende reproduzierbar per PowerShell und Microsoft Graph in Microsoft Entra ID anlegen und anschließend die Duplikatvermeidung nachweisen.
+Mehrere fiktive Mitarbeitende reproduzierbar per PowerShell und Microsoft Graph in Microsoft Entra ID anlegen, ihre Attribute und Portal-Sichtbarkeit prüfen, sie den passenden Department-Gruppen zuordnen und Duplikatvermeidung nachweisen.
 
 ## Durchführung
 
 1. `sample-data/users.csv` wurde als `users-lab.csv` für die Lab-Domain vorbereitet.
 2. Microsoft Graph wurde per delegierter Authentifizierung verbunden.
-3. `New-LabUsersFromCsv.ps1 -WhatIf` wurde ausgeführt.
-4. Die Simulation zeigte exakt acht geplante Benutzeranlagen.
-5. Das Onboarding-Skript wurde anschließend gegen den Testtenant ausgeführt.
-6. Ein weiterer Script-Lauf wurde unmittelbar danach zur Idempotenzprüfung durchgeführt.
+3. `New-LabUsersFromCsv.ps1 -WhatIf` zeigte exakt acht geplante Benutzeranlagen.
+4. Das Onboarding-Skript wurde gegen den Testtenant ausgeführt.
+5. Ein erneuter Lauf erkannte alle acht Benutzer und übersprang sie ohne Duplikate.
+6. Die acht Testbenutzer wurden im Entra-Portal verifiziert.
+7. `Set-DepartmentGroupMemberships.ps1 -WhatIf` zeigte acht geplante Department-Zuordnungen.
+8. Die acht Benutzer wurden entsprechend ihrer CSV-Department-Werte den fünf `SG-Dept-*` Gruppen zugeordnet.
+9. Ein erneuter Membership-Lauf erkannte alle acht vorhandenen Mitgliedschaften und fügte keine Duplikate hinzu.
 
 ## Ergebnis
 
 - Geplante Testbenutzer: `8`
-- `-WhatIf` validiert: `Ja`
-- Benutzer im Tenant vorhanden: `Ja`
-- Zweiter Lauf ohne Duplikate: `Ja`
-- Zweiter Lauf: `8 x Skipped`
+- `-WhatIf` Benutzeranlage validiert: `Ja`
+- Testbenutzer im Entra-Portal sichtbar: `8`
+- Benutzer-Onboarding zweiter Lauf: `8 x Skipped`
 - Grund: `Benutzer existiert bereits.`
-- Verwendete Script-Datei: `New-LabUsersFromCsv.ps1`
+- Department-Mitgliedschaften erster Lauf: `8 x Added`
+- Department-Mitgliedschaften zweiter Lauf: `8 x Existing`
+- Grund: `Membership already exists.`
+- Verwendete Scripts:
+  - `New-LabUsersFromCsv.ps1`
+  - `Set-DepartmentGroupMemberships.ps1`
 
-### Idempotenznachweis
+### Department-Zuordnung
 
-Beim erneuten Lauf wurden alle acht vorgesehenen Testidentitäten erkannt und übersprungen. Für jeden Datensatz wurde `Status = Skipped` mit `Reason = Benutzer existiert bereits.` zurückgegeben. Damit ist nachgewiesen, dass ein wiederholter CSV-Onboarding-Lauf keine doppelten Microsoft-Entra-Benutzer erzeugt.
+| Testidentität | Zielgruppe | Erstlauf | Zweitlauf |
+|---|---|---|---|
+| Anna Berger | `SG-Dept-HR` | `Added` | `Existing` |
+| Jonas Weber | `SG-Dept-Finance` | `Added` | `Existing` |
+| Sophie Wagner | `SG-Dept-Finance` | `Added` | `Existing` |
+| Daniel Hoffmann | `SG-Dept-IT` | `Added` | `Existing` |
+| Felix Braun | `SG-Dept-IT` | `Added` | `Existing` |
+| Mia Schneider | `SG-Dept-Operations` | `Added` | `Existing` |
+| Laura Klein | `SG-Dept-Sales` | `Added` | `Existing` |
+| Lukas Fischer | `SG-Dept-Sales` | `Added` | `Existing` |
+
+## Idempotenznachweis
+
+Der wiederholte CSV-Onboarding-Lauf erzeugte keine doppelten Benutzer. Ebenso erzeugte der wiederholte Department-Membership-Lauf keine doppelten Gruppenmitgliedschaften. Damit sind sowohl Benutzerbereitstellung als auch gruppenbasierte Zugriffszuordnung reproduzierbar und idempotent umgesetzt.
 
 ## Sicherheitsprinzipien
 
 - Ausschließlich fiktive Testidentitäten verwendet.
-- Keine Initialkennwörter, Tenant-IDs oder personenbezogenen Echtdaten im Repository.
-- Schreibende Aktion vorab mit `-WhatIf` geprüft.
+- Keine Initialkennwörter, Tenant-IDs, Object IDs oder personenbezogenen Echtdaten im Repository.
+- Schreibende Aktionen vorab mit `-WhatIf` geprüft.
 - Initialkennwörter werden nicht als Evidence gespeichert oder veröffentlicht.
-- Höhere Entra-Rollen werden nur bei tatsächlichem Bedarf verwendet.
 - Screenshots werden vor Veröffentlichung redigiert.
-
-## Noch offene Verifikation
-
-- Entra-Portal: acht Testbenutzer sichtbar
-- Stichprobe der Benutzerattribute: Display Name, Department, Job Title, Usage Location
-- Zuordnung der Benutzer zu den fünf Department-Gruppen
+- Administrative Berechtigungen werden nach Least-Privilege-Prinzip vergeben.
 
 ## Evidence-Artefakte
 
 - `LAB-02-01-whatif-terminal.png` – optional, redigiert
-- `LAB-02-02-created-users.png` – noch offen
+- `LAB-02-02-created-users.png` – Portal-Verifikation vorhanden; vor Veröffentlichung redigieren
 - `LAB-02-03-idempotency-terminal.png` – optional, redigiert
-- anonymisierter Ergebnisexport – optional
+- `LAB-02-04-department-memberships.png` – optional, redigiert
 
-> Keine Kennwörter oder unveränderten Object IDs in Evidence-Dateien veröffentlichen.
+> Keine Kennwörter, unveränderten Object IDs oder administrativen Kontokennungen in Evidence-Dateien veröffentlichen.

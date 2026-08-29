@@ -12,7 +12,7 @@ Bei der Registrierung:
 
 - Firmenname: `NordWerk GmbH`
 - Land/Region: eigenes tatsächliches Land auswählen
-- Tenant-Domain: einen verfügbaren neutralen Lab-Namen verwenden, z. B. `nordwerk-itlab.onmicrosoft.com`
+- Tenant-Domain: einen verfügbaren neutralen Lab-Namen verwenden
 - Das zuerst angelegte Administratorkonto ausschließlich für die Lab-Verwaltung verwenden
 - Kennwörter, Tenant-IDs, Client-Secrets und Zertifikate niemals in GitHub speichern
 
@@ -33,22 +33,20 @@ cd entraflow/enterprise-lab/scripts
 Microsoft Graph verbinden:
 
 ```powershell
-./Connect-EntraLab.ps1
+./Connect-EntraLab.ps1 | Out-Null
 ```
 
-Verbindung kontrollieren:
-
-```powershell
-Get-MgContext | Select-Object TenantId, Account, AuthType, Scopes
-```
+Die Verbindung für eine öffentliche Evidence-Aufnahme nicht mit `Get-MgContext` ausgeben: Dieser Kontext enthält Tenant-, Client- und Kontoinformationen.
 
 ## 3. Baseline-Gruppen zunächst simulieren
 
 ```powershell
-./Initialize-TenantBaseline.ps1 -WhatIf
+./Initialize-TenantBaseline.ps1 -WhatIf |
+    Select-Object DisplayName, Status, Action |
+    Format-Table -AutoSize
 ```
 
-Beklenen hedef gruplar:
+Erwartete Zielgruppen:
 
 - `SG-Dept-IT`
 - `SG-Dept-HR`
@@ -60,42 +58,47 @@ Beklenen hedef gruplar:
 
 ## 4. Baseline-Gruppen erstellen
 
-`-WhatIf` çıktısını kontrol ettikten sonra:
+Nach Kontrolle der `-WhatIf`-Ausgabe:
 
 ```powershell
-./Initialize-TenantBaseline.ps1
+$result = ./Initialize-TenantBaseline.ps1
+$result |
+    Select-Object DisplayName, Status, Action |
+    Sort-Object DisplayName |
+    Format-Table -AutoSize
 ```
 
-İkinci kez çalıştırıldığında mevcut gruplar `Existing` olarak görünmeli ve yinelenen grup oluşturmamalıdır.
-
-## 5. Doğrulama
+## 5. Idempotenz verifizieren
 
 ```powershell
-Get-MgGroup -All |
-    Where-Object DisplayName -In @(
-        'SG-Dept-IT',
-        'SG-Dept-HR',
-        'SG-Dept-Finance',
-        'SG-Dept-Sales',
-        'SG-Dept-Operations',
-        'GRP-CA-Pilot',
-        'GRP-Devices-Pilot'
-    ) |
-    Select-Object DisplayName, Id |
-    Sort-Object DisplayName
+$check = ./Initialize-TenantBaseline.ps1
+$check |
+    Select-Object DisplayName, Status, Action |
+    Sort-Object DisplayName |
+    Format-Table -AutoSize
 ```
+
+Erfolgskriterium: Genau sieben eindeutige Gruppen liefern `Status = Existing` und `Action = None`. Der vollständige maschinenlesbare PASS-Check steht in [`LAB-01-EVIDENCE-CAPTURE.md`](LAB-01-EVIDENCE-CAPTURE.md).
 
 ## 6. Evidence
 
-LAB-01 ancak aşağıdaki kanıtlar üretildikten sonra tamamlanmış sayılır:
+LAB-01 benötigt fünf echte, redigierte PNG-Artefakte:
 
-1. Intune/Entra yönetim merkezinde tenant genel görünümü – tenant ID gibi hassas olmayan bilgiler gerekirse kısmen redakte edilir.
-2. Yedi baseline grubunun Entra ID ekran görüntüsü.
-3. `Initialize-TenantBaseline.ps1 -WhatIf` terminal çıktısı.
-4. Script gerçek çalıştırıldıktan sonraki terminal çıktısı.
-5. İkinci çalıştırmada duplicate oluşmadığını gösteren `Existing` çıktısı.
-6. `evidence/LAB-01-baseline.md` dosyasında kısa teknik değerlendirme.
+1. `LAB-01-01-tenant-overview.png`
+2. `LAB-01-02-baseline-groups.png`
+3. `LAB-01-03-whatif.png`
+4. `LAB-01-04-created.png`
+5. `LAB-01-05-idempotency.png`
 
-## Güvenlik kararı
+Zusätzliche Dokumentation:
 
-LAB-01 aşamasında Conditional Access politikası etkinleştirilmez. Önce pilot gruplar oluşturulur, erişim senaryoları daha sonraki lablarda test/report-only yaklaşımıyla uygulanır. Global Administrator rolü günlük kullanım için hedef rol değildir; mümkün olan sonraki adımlarda daha dar kapsamlı roller kullanılacaktır.
+- `evidence/LAB-01-baseline.md`
+- `evidence/LAB-01-RBAC-MATRIX.md`
+- `evidence/LAB-01-BREAK-GLASS.md`
+- `evidence/LAB-01-evidence-manifest.md`
+
+Das sichere Capture- und Redaction-Verfahren steht in [`LAB-01-EVIDENCE-CAPTURE.md`](LAB-01-EVIDENCE-CAPTURE.md). LAB-01 gilt erst als abgeschlossen, wenn alle fünf Originalbilder geprüft, abgelegt und im Manifest als `Captured and redacted` markiert sind.
+
+## Sicherheitsentscheidung
+
+LAB-01 aktiviert keine Conditional-Access-Policy. Zuerst werden Pilotgruppen, RBAC-Zielmodell und Notfallkonzept dokumentiert. Spätere Policies werden kontrolliert und soweit verfügbar zunächst im Report-only-Modus getestet. Global Administrator ist keine Rolle für tägliche Administration.
